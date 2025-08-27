@@ -9,34 +9,31 @@ app.use(cors());
 app.use(express.json());
 
 // Importation et utilisation des routes
-const authRoutes = require("./routes/authRoutes");
+const authRoutes = require("./Routes/authRoutes"); // Chemin corrigé
 app.use("/api/auth", authRoutes);
 
-const countryRoutes = require("./routes/countryRoutes");
+const countryRoutes = require("./Routes/countryRoutes"); // Chemin corrigé
 app.use("/api/countries", countryRoutes);
 
-const cityRoutes = require("./routes/cityRoutes");
+const cityRoutes = require("./Routes/cityRoutes"); // Chemin corrigé
 app.use("/api/cities", cityRoutes);
 
-const sessionRoutes = require("./routes/sessionRoutes");
+const sessionRoutes = require("./Routes/sessionRoutes"); // Chemin corrigé
 app.use("/api/sessions", sessionRoutes);
 
-const anonymousClickRoutes = require("./routes/anonymousClickRoutes");
+const anonymousClickRoutes = require("./Routes/anonymousClickRoutes"); // Chemin corrigé
 app.use("/api/anonymous-clicks", anonymousClickRoutes);
 
-const invitationRoutes = require("./routes/invitationRoutes");
+const invitationRoutes = require("./Routes/invitationRoutes"); // Chemin corrigé
 app.use("/api/invitations", invitationRoutes);
 
-const registrationRoutes = require("./routes/registrationRoutes");
+const registrationRoutes = require("./Routes/registrationRoutes"); // Chemin corrigé
 app.use("/api/registrations", registrationRoutes);
 
-// Correction de la casse : "Routes" devient "routes"
-const emailRoutes = require("./routes/emailRoutes");
+const emailRoutes = require("./Routes/emailRoutes"); // Déjà correct
 app.use("/api/email", emailRoutes);
 
-// NEW: Reminder Routes
-// Correction de la casse : "Routes" devient "routes"
-const reminderRoutes = require("./routes/reminderRoutes");
+const reminderRoutes = require("./Routes/reminderRoutes"); // Déjà correct
 app.use("/api/reminders", reminderRoutes);
 
 app.get("/", (req, res) => {
