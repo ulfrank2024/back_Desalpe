@@ -35,7 +35,7 @@ const emailRoutes = require('./routes/emailRoutes');
 app.use('/api/email', emailRoutes);
 
 // NEW: Reminder Routes
-const reminderRoutes = require('./routes/reminderRoutes');
+const reminderRoutes = require('./Routes/reminderRoutes');
 app.use('/api/reminders', reminderRoutes);
 
 app.get('/', (req, res) => {
