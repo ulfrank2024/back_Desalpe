@@ -7,7 +7,6 @@ const port = process.env.PORT || 8080;
 
 app.use(cors());
 app.use(express.json());
-console.log('server.js: Request received by Express app.'); // NEW LOG
 
 // Importation et utilisation des routes
 const authRoutes = require('./routes/authRoutes');
