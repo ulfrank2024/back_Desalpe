@@ -108,14 +108,11 @@ const listAllInvitations = async (req, res) => {
 
         const { data: allSessions, error: sessionsError } = await supabase
             .from('sessions')
-            .select(`
-                id,
-                title,
-                address,
-                language,
-                start_time,
-                end_time
-            `);
+           
+                .select(`
+                id, title, address, start_time, end_time, language
+            `)
+            
 
         if (sessionsError) throw sessionsError;
 
@@ -221,27 +218,26 @@ const fullCreateInvitation = async (req, res) => {
             console.error('Could not log registration history:', historyError);
         }
 
-        // const allSelectedTimes = Object.values(selectedSessionDates).flat(); // Removed as selectedSessionDates is no longer sent
-        const { data: sessionDetails, error: sessionDetailsError } = await supabase
-            .from('sessions')
-            .select(`
-                id, title, address, start_time, end_time
-            `)
-            .in('id', sessionIds); // Filter by session ID
+        const { data: sessionDetails, error: sessionDetailsError } =
+            await supabase
+                .from("sessions")
+                .select(`id, title, address, start_time, end_time, language`
+                )
+                .in("id", sessionIds);
 
         if (sessionDetailsError) {
             console.error("Error fetching session details for email:", sessionDetailsError);
         }
 
-        const subject = 'Confirmation de votre participation à notre formation';
         const sessionsForEmail = {};
         if (sessionDetails) {
-            sessionDetails.forEach(session => { // Iterate directly over session details
+            sessionDetails.forEach(session => {
                 if (!sessionsForEmail[session.id]) {
                     sessionsForEmail[session.id] = {
                         title: session.title,
                         location: session.address,
                         locationEn: session.address,
+                        language: session.language,
                         details: [],
                     };
                 }
@@ -261,7 +257,7 @@ const fullCreateInvitation = async (req, res) => {
         `;
 
         Object.values(sessionsForEmail).forEach(session => {
-            emailContentEn += `<p>For the session in <strong>${session.locationEn}</strong>, you will be warmly welcomed on the following dates:</p>`;
+            emailContentEn += `<p>For the session in <strong>${session.locationEn}</strong> (${session.language}), you will be warmly welcomed on the following dates:</p>`;
             emailContentEn += `<ul style="list-style-type: none; padding-left: 0;">`;
             session.details.forEach(detail => {
                 emailContentEn += `<li><strong style="color: #0056b3;">${detail.date}, from ${detail.startTime} to ${detail.endTime}</strong></li>`;
@@ -286,7 +282,7 @@ const fullCreateInvitation = async (req, res) => {
         `;
 
         Object.values(sessionsForEmail).forEach(session => {
-            emailContentFr += `<p>Pour la session à <strong>${session.location}</strong>, vous serez chaleureusement accueilli aux dates suivantes :</p>`;
+            emailContentFr += `<p>Pour la session à <strong>${session.location}</strong> (${session.language}), vous serez chaleureusement accueilli aux dates suivantes :</p>`;
             emailContentFr += `<ul style="list-style-type: none; padding-left: 0;">`;
             session.details.forEach(detail => {
                 emailContentFr += `<li><strong style="color: #0056b3;">${detail.date}, de ${detail.startTime} à ${detail.endTime}</strong></li>`;
