@@ -92,9 +92,11 @@ const sendUpcomingReminders = async (req, res) => {
                     const emailContent = `
                         <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 20px auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
                             <div style="background-color: #254c07; color: white; padding: 20px; text-align: center;">
-                                <h1 style="margin: 0; font-size: 24px;">Rappel / Reminder</h1>
+                                <h1 style="margin: 0; font-size: 24px;"> Reminder / Rappel /</h1>
                             </div>
                             <div style="padding: 30px;">
+                            <p>LA VERSION FRANCAISE SUIT CI-DESSOUS,</p>
+                            <br/>
                                 ${reminderEn}
                                 <hr style="margin: 30px 0;"/>
                                 ${reminderFr}

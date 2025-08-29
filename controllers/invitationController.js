@@ -90,7 +90,7 @@ const createInvitation = async (req, res) => {
             "Participation Confirmation / Confirmation de votre participation";
 
         let emailContentEn = `
-        <p>LA VERSION FRANCAISE SUIT CI-DESSOUS,</p>
+        
         <p>Dear ${firstName},</p>
 <p>We are delighted that you are participating in our New Generation Entrepreneurship Training.</p>
 <p>This session will transform your vision of entrepreneurship and offer you new opportunities for lasting success.</p>`;
@@ -98,6 +98,7 @@ const createInvitation = async (req, res) => {
             emailContentEn += `<p>Session Details:</p><ul style="list-style-type: none; padding-left: 0;">`;
             session.details.forEach(detail => {
                 emailContentEn += `
+                    <li>&#8226; Title: ${session.title}</li>
                     <li>&#8226; Address: ${session.locationEn}</li>
                     <li>&#8226; Date: ${detail.date}</li>
                     <li>&#8226; Time: From ${detail.startTime} to ${detail.endTime}</li>
@@ -136,7 +137,7 @@ const createInvitation = async (req, res) => {
         const fullHtmlContent = `
             <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 20px auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
                 <div style="background-color: #254c07; color: white; padding: 20px; text-align: center;">
-                    <h1 style="margin: 0; font-size: 24px;">Confirmation de votre inscription / Registration Confirmation</h1>
+                    <h1 style="margin: 0; font-size: 24px;">Registration Confirmation / Confirmation de votre inscription </h1>
                 </div>
                 <div style="padding: 30px;">
                     <p>LA VERSION FRANCAISE SUIT CI-DESSOUS,</p>
