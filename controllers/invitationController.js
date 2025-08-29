@@ -86,29 +86,52 @@ const createInvitation = async (req, res) => {
             });
         }
 
-        const subject = 'Confirmation de votre participation / Participation Confirmation';
+        const subject =
+            "Participation Confirmation / Confirmation de votre participation";
 
-        let emailContentEn = `<p>LA VERSION FRANCAISE SUIT CI-DESSOUS,</p>\n<p>Dear ${firstName},</p>\n<p>It is with immense pleasure that we acknowledge your intention to participate in our new generation entrepreneurship training.</p>\n<p>This training will certainly revolutionize your perception of entrepreneurship and offer you new perspectives for sustainable prosperity and enrichment.</p>`;
+        let emailContentEn = `
+        <p>LA VERSION FRANCAISE SUIT CI-DESSOUS,</p>
+        <p>Dear ${firstName},</p>
+<p>We are delighted that you are participating in our New Generation Entrepreneurship Training.</p>
+<p>This session will transform your vision of entrepreneurship and offer you new opportunities for lasting success.</p>`;
         Object.values(sessionsForEmail).forEach(session => {
-            emailContentEn += `<p>For the session in <strong>${session.locationEn}</strong>, you will be warmly welcomed on the following dates:</p>`;
-            emailContentEn += `<ul style="list-style-type: none; padding-left: 0;">`;
+            emailContentEn += `<p>Session Details:</p><ul style="list-style-type: none; padding-left: 0;">`;
             session.details.forEach(detail => {
-                emailContentEn += `<li><strong style="color: #0056b3;">${detail.date}, from ${detail.startTime} to ${detail.endTime}</strong> <span style="color: green;">(${session.language})</span></li>`;
+                emailContentEn += `
+                    <li>&#8226; Address: ${session.locationEn}</li>
+                    <li>&#8226; Date: ${detail.date}</li>
+                    <li>&#8226; Time: From ${detail.startTime} to ${detail.endTime}</li>
+                    <li>&#8226; Language: ${session.language}</li>
+                `;
             });
             emailContentEn += `</ul>`;
         });
-        emailContentEn += `<p>We kindly ask you to arrive at the training location 10 to 5 minutes beforehand, if possible.</p>\n<p>The training lasts 3 hours and includes wonderful gift surprises.</p>\n<p>You have absolutely no obligation to pay to attend this masterclass training. If you are satisfied and convinced at the end of the training, it is your choice whether or not to pay.</p>\n<p>We look forward to welcoming you. See you soon! </p>\n<p>The Administrative Staff</p>\n<p>--</p>\n<br/>`;
+        emailContentEn += `<p>We encourage you to arrive 5 to 10 minutes before the start of the training.</p>
+<p>The training lasts 3 hours and will be punctuated by wonderful surprises.</p>
+<p>There is no charge to participate in this masterclass. At the end, if you are satisfied and convinced, it will be at your discretion to make a payment.</p>
+<p>We look forward to welcoming you soon!</p>
+<p>The Administrative Staff</p>`;
 
-        let emailContentFr = `<p>Cher ${firstName},</p>\n<p>C'est avec un immense plaisir que nous prenons note de votre intention de participer à notre formation en entrepreneuriat de nouvelle génération.</p>\n<p>Cette formation va certainement révolutionner votre perception de l'entrepreneuriat et vous offrir de nouvelles perspectives de prospérité et d'enrichissement durables.</p>`;
+        let emailContentFr = `<p>Cher ${firstName},</p>
+<p>Nous sommes ravis de votre participation à notre formation en entrepreneuriat de nouvelle génération.</p>
+<p>Cette session transformera votre vision de l'entrepreneuriat et vous offrira de nouvelles opportunités de succès durable.</p>`;
         Object.values(sessionsForEmail).forEach(session => {
-            emailContentFr += `<p>Pour la session à <strong>${session.location}</strong>, vous serez chaleureusement accueilli aux dates suivantes :</p>`;
-            emailContentFr += `<ul style="list-style-type: none; padding-left: 0;">`;
+            emailContentFr += `<p>Détails de la session :</p><ul style="list-style-type: none; padding-left: 0;">`;
             session.details.forEach(detail => {
-                emailContentFr += `<li><strong style="color: #0056b3;">${detail.date}, de ${detail.startTime} à ${detail.endTime}</strong> <span style="color: green;">(${session.language})</span></li>`;
+                emailContentFr += `
+                    <li>&#8226; Adresse : ${session.location}</li>
+                    <li>&#8226; Date : ${detail.date}</li>
+                    <li>&#8226; Heure : De ${detail.startTime} à ${detail.endTime}</li>
+                    <li>&#8226; Langue: ${session.language}</li>
+                `;
             });
             emailContentFr += `</ul>`;
         });
-        emailContentFr += `<p>Nous prions autant que cela soit possible pour vous de vous présenter au lieu de la formation 10 à 5mn avant.</p>\n<p>La formation dure 3 heures et se ponctue par de belles surprises cadeaux.</p>\n<p>Vous n'avez absolument rien à payer pour bénéficier de cette formation express master classe. Si à la fin de la formation vous êtes satisfait et convaincu, ça sera votre libre choix de faire un paiement ou pas.</p>\n<p>Nous avons hâte de vous recevoir, à bientôt ! </p>\n<p>Le Corps Administratif</p>\n<p>--</p>`;
+        emailContentFr += `<p>Nous vous encourageons à arriver 5 à 10 minutes avant le début de la formation.</p>
+<p>La formation dure 3 heures et sera ponctuée de belles surprises.</p>
+<p>Vous n'avez rien à payer pour participer à cette masterclass. À la fin, si vous êtes satisfait et convaincu, ça sera à votre discrétion de faire un paiement.</p>
+<p>Nous avons hâte de vous recevoir bientôt !</p>
+<p>Le Corps Administratif</p>`;
 
         const fullHtmlContent = `
             <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 20px auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
@@ -116,6 +139,8 @@ const createInvitation = async (req, res) => {
                     <h1 style="margin: 0; font-size: 24px;">Confirmation de votre inscription / Registration Confirmation</h1>
                 </div>
                 <div style="padding: 30px;">
+                    <p>LA VERSION FRANCAISE SUIT CI-DESSOUS,</p>
+                    <br/>
                     ${emailContentEn}
                     <hr style="margin: 30px 0;"/>
                     ${emailContentFr}

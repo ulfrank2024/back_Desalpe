@@ -42,7 +42,7 @@ const sendUpcomingReminders = async (req, res) => {
                 const shouldSendReminder = !lastReminderSent || (now.getTime() - lastReminderSent.getTime() > 24 * 60 * 60 * 1000);
 
                 if (shouldSendReminder) {
-                    const subject = `Rappel concernant votre formation imminente / Reminder about your upcoming training`;
+                    const subject = `Reminder about your upcoming training / Rappel concernant votre formation imminente `;
 
                     // --- Date and Time Formatting ---
                     const frenchDate = new Date(session.start_time).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/Montreal' });
@@ -55,35 +55,36 @@ const sendUpcomingReminders = async (req, res) => {
 
                     // --- English Email Content ---
                     const reminderEn = `
+                        <p>LA VERSION FRANCAISE SUIT CI-DESSOUS,</p>
                         <p>Dear ${user.first_name},</p>
-                        <p>It is with pleasure that we send you this friendly reminder regarding your upcoming new generation entrepreneurship training session.</p>
-                        <p><strong>Session Details:</strong></p>
+                        <p>We are delighted to remind you of your New Generation Entrepreneurship Training Session.</p>
+                        <p>Session Details:</p>
                         <ul style="list-style-type: none; padding-left: 0;">
-                            <li><strong>Title:</strong> ${session.title}</li>
-                            <li><strong>Language:</strong> ${session.language}</li>
-                            <li><strong>Address:</strong> ${session.address}</li>
-                            <li><strong>Date:</strong> ${englishDate}</li>
-                            <li><strong>Time:</strong> from ${englishStartTime} to ${englishEndTime}</li>
+                            <li>&#8226; Title: ${session.title}</li>
+                            <li>&#8226; Address: ${session.address}</li>
+                            <li>&#8226; Date: ${englishDate}</li>
+                            <li>&#8226; Time: From ${englishStartTime} to ${englishEndTime}</li>
+                            <li>&#8226; Language: ${session.language}</li>
                         </ul>
-                        <p>We kindly ask you to arrive at the training location 10 to 5 minutes beforehand, if possible.</p>
-                        <p>We look forward to welcoming you.</p>
+                        <p>Please arrive 5 to 10 minutes before the training begins.</p>
+                        <p>We look forward to welcoming you!</p>
                         <p>The Administrative Staff</p>
                     `;
 
                     // --- French Email Content ---
                     const reminderFr = `
                         <p>Cher ${user.first_name},</p>
-                        <p>C'est avec plaisir que nous vous envoyons ce rappel amical concernant votre session imminente de formation en entrepreneuriat de nouvelle génération.</p>
-                        <p><strong>Détails de la session :</strong></p>
+                        <p>Nous sommes ravis de vous rappeler votre session de formation en entrepreneuriat de nouvelle génération.</p>
+                        <p>Détails de la session :</p>
                         <ul style="list-style-type: none; padding-left: 0;">
-                            <li><strong>Titre :</strong> ${session.title}</li>
-                            <li><strong>Langue :</strong> ${session.language}</li>
-                            <li><strong>Adresse :</strong> ${session.address}</li>
-                            <li><strong>Date :</strong> ${frenchDate}</li>
-                            <li><strong>Heure :</strong> de ${frenchStartTime} à ${frenchEndTime}</li>
+                            <li>&#8226; Titre : ${session.title}</li>
+                            <li>&#8226; Adresse : ${session.address}</li>
+                            <li>&#8226; Date : ${frenchDate}</li>
+                            <li>&#8226; Heure : De ${frenchStartTime} à ${frenchEndTime}</li>
+                            <li>&#8226; Langue: ${session.language}</li>
                         </ul>
-                        <p>Nous prions autant que cela soit possible pour vous de vous présenter au lieu de la formation 10 à 5mn avant.</p>
-                        <p>Nous avons hâte de vous recevoir.</p>
+                        <p>Nous vous prions de bien vouloir arriver 5 à 10 minutes avant le début de la formation.</p>
+                        <p>Au plaisir de vous accueillir !</p>
                         <p>Le Corps Administratif</p>
                     `;
 
