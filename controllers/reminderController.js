@@ -55,7 +55,6 @@ const sendUpcomingReminders = async (req, res) => {
 
                     // --- English Email Content ---
                     const reminderEn = `
-                        <p>LA VERSION FRANCAISE SUIT CI-DESSOUS,</p>
                         <p>Dear ${user.first_name},</p>
                         <p>We are delighted to remind you of your New Generation Entrepreneurship Training Session.</p>
                         <p>Session Details:</p>

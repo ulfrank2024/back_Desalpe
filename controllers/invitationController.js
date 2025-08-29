@@ -120,6 +120,7 @@ const createInvitation = async (req, res) => {
             emailContentFr += `<p>Détails de la session :</p><ul style="list-style-type: none; padding-left: 0;">`;
             session.details.forEach(detail => {
                 emailContentFr += `
+                    <li>&#8226; Title: ${session.title}</li>
                     <li>&#8226; Adresse : ${session.location}</li>
                     <li>&#8226; Date : ${detail.date}</li>
                     <li>&#8226; Heure : De ${detail.startTime} à ${detail.endTime}</li>
