@@ -86,7 +86,7 @@ const createInvitation = async (req, res) => {
             });
         }
 
-        const subject = 'Confirmation de votre participation à notre formation';
+        const subject = 'Confirmation de votre participation / Participation Confirmation';
 
         let emailContentEn = `<p>LA VERSION FRANCAISE SUIT CI-DESSOUS,</p>\n<p>Dear ${firstName},</p>\n<p>It is with immense pleasure that we acknowledge your intention to participate in our new generation entrepreneurship training.</p>\n<p>This training will certainly revolutionize your perception of entrepreneurship and offer you new perspectives for sustainable prosperity and enrichment.</p>`;
         Object.values(sessionsForEmail).forEach(session => {
