@@ -3,22 +3,12 @@ const { sendEmail } = require('../services/emailService');
 
 const sendUpcomingReminders = async (req, res) => {
     const now = new Date();
-    const twentyFourHoursLater = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours from now
-
-    console.log(`[Reminder] Checking for sessions starting between ${now.toISOString()} and ${twentyFourHoursLater.toISOString()}`);
+    const twentyFourHoursLater = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
     try {
-        // 1. Find sessions starting in the next 24 hours that haven't had reminders sent yet (or sent long ago)
         const { data: upcomingSessions, error: sessionsError } = await supabase
             .from('sessions')
-            .select(`
-                id,
-                title,
-                address,
-                language,
-                start_time,
-                end_time
-            `)
+            .select(`id, title, address, language, start_time, end_time`)
             .gte('start_time', now.toISOString())
             .lte('start_time', twentyFourHoursLater.toISOString());
 
@@ -28,73 +18,94 @@ const sendUpcomingReminders = async (req, res) => {
         }
 
         if (upcomingSessions.length === 0) {
-            console.log("[Reminder] No upcoming sessions found for reminders.");
             return res.status(200).json({ message: "No upcoming sessions found for reminders." });
         }
-
-        console.log(`[Reminder] Found ${upcomingSessions.length} upcoming sessions.`);
 
         let emailsSentCount = 0;
 
         for (const session of upcomingSessions) {
-            // 2. Find users registered for this session
             const { data: invitationSessions, error: invSessionsError } = await supabase
                 .from('invitation_sessions')
-                .select(`
-                    invitation_id,
-                    invitations ( 
-                        id,
-                        first_name,
-                        email,
-                        reminder_sent_at 
-                    )
-                `)
+                .select(`invitation_id, invitations (id, first_name, email, reminder_sent_at)`)
                 .eq('session_id', session.id);
 
             if (invSessionsError) {
                 console.error(`[Reminder] Error fetching invitations for session ${session.id}:`, invSessionsError);
-                continue; // Skip to next session
+                continue;
             }
 
             for (const invSession of invitationSessions) {
-                const user = invSession.invitations; // Access the nested invitation object
-                if (!user) continue; // Skip if invitation data is missing
+                const user = invSession.invitations;
+                if (!user) continue;
 
-                // 3. Check if reminder already sent for this session to this user
-                // This logic assumes 'reminder_sent_at' is a timestamp on the 'invitations' table
-                // and we only want to send once per session. A more robust solution might involve a separate reminder_log table.
-                // For simplicity, let's assume we send if reminder_sent_at is null or older than 24 hours ago (to re-send if needed)
                 const lastReminderSent = user.reminder_sent_at ? new Date(user.reminder_sent_at) : null;
-                const shouldSendReminder = !lastReminderSent || (now.getTime() - lastReminderSent.getTime() > 24 * 60 * 60 * 1000); // Send if never sent or sent over 24h ago
+                const shouldSendReminder = !lastReminderSent || (now.getTime() - lastReminderSent.getTime() > 24 * 60 * 60 * 1000);
 
                 if (shouldSendReminder) {
-                    // 4. Construct and send reminder email
-                    const sessionStartTime = new Date(session.start_time);
-                    const sessionEndTime = new Date(session.end_time);
+                    const subject = `Rappel concernant votre formation imminente / Reminder about your upcoming training`;
 
-                    const subject = `Rappel: Votre session de formation "${session.title}" commence bientôt !`;
-                    const emailContent = `
-                        <p>Bonjour ${user.first_name},</p>
-                        <p>Ceci est un rappel amical que votre session de formation <strong>"${session.title}"</strong> est prévue pour bientôt !</p>
+                    // --- Date and Time Formatting ---
+                    const frenchDate = new Date(session.start_time).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/Montreal' });
+                    const frenchStartTime = new Date(session.start_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Montreal' });
+                    const frenchEndTime = new Date(session.end_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Montreal' });
+
+                    const englishDate = new Date(session.start_time).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/Montreal' });
+                    const englishStartTime = new Date(session.start_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Montreal' });
+                    const englishEndTime = new Date(session.end_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Montreal' });
+
+                    // --- English Email Content ---
+                    const reminderEn = `
+                        <p>Dear ${user.first_name},</p>
+                        <p>It is with pleasure that we send you this friendly reminder regarding your upcoming new generation entrepreneurship training session.</p>
+                        <p><strong>Session Details:</strong></p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><strong>Title:</strong> ${session.title}</li>
+                            <li><strong>Address:</strong> ${session.address}</li>
+                            <li><strong>Date:</strong> ${englishDate}</li>
+                            <li><strong>Time:</strong> from ${englishStartTime} to ${englishEndTime}</li>
+                        </ul>
+                        <p>We kindly ask you to arrive at the training location 10 to 5 minutes beforehand, if possible.</p>
+                        <p>We look forward to welcoming you.</p>
+                        <p>The Administrative Staff</p>
+                    `;
+
+                    // --- French Email Content ---
+                    const reminderFr = `
+                        <p>Cher ${user.first_name},</p>
+                        <p>C'est avec plaisir que nous vous envoyons ce rappel amical concernant votre session imminente de formation en entrepreneuriat de nouvelle génération.</p>
                         <p><strong>Détails de la session :</strong></p>
-                        <ul>
+                        <ul style="list-style-type: none; padding-left: 0;">
                             <li><strong>Titre :</strong> ${session.title}</li>
                             <li><strong>Adresse :</strong> ${session.address}</li>
-                            <li><strong>Date :</strong> ${sessionStartTime.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</li>
-                            <li><strong>Heure :</strong> de ${sessionStartTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} à ${sessionEndTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</li>
+                            <li><strong>Date :</strong> ${frenchDate}</li>
+                            <li><strong>Heure :</strong> de ${frenchStartTime} à ${frenchEndTime}</li>
                         </ul>
-                        <p>Veuillez vous assurer d'être prêt à l'heure. Nous avons hâte de vous y voir !</p>
-                        <p>Cordialement,</p>
-                        <p>L'équipe GraceDesalpe</p>
+                        <p>Nous prions autant que cela soit possible pour vous de vous présenter au lieu de la formation 10 à 5mn avant.</p>
+                        <p>Nous avons hâte de vous recevoir.</p>
+                        <p>Le Corps Administratif</p>
+                    `;
+
+                    // --- Final HTML ---
+                    const emailContent = `
+                        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 20px auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
+                            <div style="background-color: #254c07; color: white; padding: 20px; text-align: center;">
+                                <h1 style="margin: 0; font-size: 24px;">Rappel / Reminder</h1>
+                            </div>
+                            <div style="padding: 30px;">
+                                ${reminderEn}
+                                <hr style="margin: 30px 0;"/>
+                                ${reminderFr}
+                            </div>
+                            <div style="background-color: #f4f4f4; color: #888; padding: 15px; text-align: center; font-size: 12px;">
+                                <p style="margin: 0;">This is an automated email, please do not reply. / Ceci est un e-mail automatique, veuillez ne pas y répondre.</p>
+                            </div>
+                        </div>
                     `;
 
                     try {
-                        await sendEmail(user.email, subject, emailContent);
+                        await sendEmail(user.email, subject, null, emailContent);
                         emailsSentCount++;
-                        console.log(`[Reminder] Sent reminder to ${user.email} for session ${session.title}`);
-
-                        // 5. Update reminder_sent_at timestamp for this invitation
-                        // This requires 'reminder_sent_at' column on 'invitations' table
+                        
                         const { error: updateError } = await supabase
                             .from('invitations')
                             .update({ reminder_sent_at: new Date().toISOString() })
