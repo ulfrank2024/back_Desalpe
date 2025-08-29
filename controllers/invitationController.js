@@ -90,10 +90,10 @@ const createInvitation = async (req, res) => {
 
         let emailContentEn = `<p>LA VERSION FRANCAISE SUIT CI-DESSOUS,</p>\n<p>Dear ${firstName},</p>\n<p>It is with immense pleasure that we acknowledge your intention to participate in our new generation entrepreneurship training.</p>\n<p>This training will certainly revolutionize your perception of entrepreneurship and offer you new perspectives for sustainable prosperity and enrichment.</p>`;
         Object.values(sessionsForEmail).forEach(session => {
-            emailContentEn += `<p>For the session in <strong>${session.locationEn}</strong> (${session.language}), you will be warmly welcomed on the following dates:</p>`;
+            emailContentEn += `<p>For the session in <strong>${session.locationEn}</strong>, you will be warmly welcomed on the following dates:</p>`;
             emailContentEn += `<ul style="list-style-type: none; padding-left: 0;">`;
             session.details.forEach(detail => {
-                emailContentEn += `<li><strong style="color: #0056b3;">${detail.date}, from ${detail.startTime} to ${detail.endTime}</strong></li>`;
+                emailContentEn += `<li><strong style="color: #0056b3;">${detail.date}, from ${detail.startTime} to ${detail.endTime}</strong> <span style="color: green;">(${session.language})</span></li>`;
             });
             emailContentEn += `</ul>`;
         });
@@ -101,10 +101,10 @@ const createInvitation = async (req, res) => {
 
         let emailContentFr = `<p>Cher ${firstName},</p>\n<p>C'est avec un immense plaisir que nous prenons note de votre intention de participer à notre formation en entrepreneuriat de nouvelle génération.</p>\n<p>Cette formation va certainement révolutionner votre perception de l'entrepreneuriat et vous offrir de nouvelles perspectives de prospérité et d'enrichissement durables.</p>`;
         Object.values(sessionsForEmail).forEach(session => {
-            emailContentFr += `<p>Pour la session à <strong>${session.location}</strong> (${session.language}), vous serez chaleureusement accueilli aux dates suivantes :</p>`;
+            emailContentFr += `<p>Pour la session à <strong>${session.location}</strong>, vous serez chaleureusement accueilli aux dates suivantes :</p>`;
             emailContentFr += `<ul style="list-style-type: none; padding-left: 0;">`;
             session.details.forEach(detail => {
-                emailContentFr += `<li><strong style="color: #0056b3;">${detail.date}, de ${detail.startTime} à ${detail.endTime}</strong></li>`;
+                emailContentFr += `<li><strong style="color: #0056b3;">${detail.date}, de ${detail.startTime} à ${detail.endTime}</strong> <span style="color: green;">(${session.language})</span></li>`;
             });
             emailContentFr += `</ul>`;
         });
