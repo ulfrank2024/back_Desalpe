@@ -110,7 +110,21 @@ const createInvitation = async (req, res) => {
         });
         emailContentFr += `<p>Nous prions autant que cela soit possible pour vous de vous présenter au lieu de la formation 10 à 5mn avant.</p>\n<p>La formation dure 3 heures et se ponctue par de belles surprises cadeaux.</p>\n<p>Vous n'avez absolument rien à payer pour bénéficier de cette formation express master classe. Si à la fin de la formation vous êtes satisfait et convaincu, ça sera votre libre choix de faire un paiement ou pas.</p>\n<p>Nous avons hâte de vous recevoir, à bientôt ! </p>\n<p>Le Corps Administratif</p>\n<p>--</p>`;
 
-        const fullHtmlContent = `<div style="font-family: Arial, sans-serif; line-height: 1.6;">\n${emailContentEn}\n<hr/>\n${emailContentFr}\n</div>`;
+        const fullHtmlContent = `
+            <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 20px auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
+                <div style="background-color: #254c07; color: white; padding: 20px; text-align: center;">
+                    <h1 style="margin: 0; font-size: 24px;">Confirmation de votre inscription / Registration Confirmation</h1>
+                </div>
+                <div style="padding: 30px;">
+                    ${emailContentEn}
+                    <hr style="margin: 30px 0;"/>
+                    ${emailContentFr}
+                </div>
+                <div style="background-color: #f4f4f4; color: #888; padding: 15px; text-align: center; font-size: 12px;">
+                    <p style="margin: 0;">This is an automated email, please do not reply. / Ceci est un e-mail automatique, veuillez ne pas y répondre.</p>
+                </div>
+            </div>
+        `;
 
         await sendEmail(email, subject, null , fullHtmlContent);
 

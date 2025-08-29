@@ -60,6 +60,7 @@ const sendUpcomingReminders = async (req, res) => {
                         <p><strong>Session Details:</strong></p>
                         <ul style="list-style-type: none; padding-left: 0;">
                             <li><strong>Title:</strong> ${session.title}</li>
+                            <li><strong>Language:</strong> ${session.language}</li>
                             <li><strong>Address:</strong> ${session.address}</li>
                             <li><strong>Date:</strong> ${englishDate}</li>
                             <li><strong>Time:</strong> from ${englishStartTime} to ${englishEndTime}</li>
@@ -76,6 +77,7 @@ const sendUpcomingReminders = async (req, res) => {
                         <p><strong>Détails de la session :</strong></p>
                         <ul style="list-style-type: none; padding-left: 0;">
                             <li><strong>Titre :</strong> ${session.title}</li>
+                            <li><strong>Langue :</strong> ${session.language}</li>
                             <li><strong>Adresse :</strong> ${session.address}</li>
                             <li><strong>Date :</strong> ${frenchDate}</li>
                             <li><strong>Heure :</strong> de ${frenchStartTime} à ${frenchEndTime}</li>
