@@ -87,7 +87,7 @@ const createInvitation = async (req, res) => {
         }
 
         const subject =
-            "Participation Confirmation / Confirmation de votre participation";
+            "Registration Confirmation / Confirmation de votre participation";
 
         let emailContentEn = `
         
