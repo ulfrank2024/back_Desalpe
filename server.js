@@ -36,6 +36,16 @@ app.use("/api/email", emailRoutes);
 const reminderRoutes = require("./Routes/reminderRoutes"); // Déjà correct
 app.use("/api/reminders", reminderRoutes);
 
+// --- Routes pour la section Inscription ---
+const inscriptionProspectsRoutes = require("./Routes/inscriptionProspectsRoutes");
+app.use("/api/inscription/prospects", inscriptionProspectsRoutes);
+
+const inscriptionLiensRoutes = require("./Routes/inscriptionLiensRoutes");
+app.use("/api/inscription/liens", inscriptionLiensRoutes);
+
+const inscriptionEventsRoutes = require("./Routes/inscriptionEventsRoutes");
+app.use("/api/inscription/events", inscriptionEventsRoutes);
+
 app.get("/", (req, res) => {
     res.send("Serveur GraceDesalpe avec Supabase est en marche !");
 });
