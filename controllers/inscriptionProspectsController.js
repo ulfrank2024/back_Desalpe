@@ -35,6 +35,7 @@ const addProspect = async (req, res) => {
             }]);
 
         if (eventError) {
+            // Log the error but don't block the email from sending
             console.error('Could not log form submission event:', eventError);
         }
 
@@ -106,6 +107,22 @@ const addProspect = async (req, res) => {
     }
 };
 
+const getAllProspects = async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('prospects')
+            .select('*')
+            .order('date_soumission', { ascending: false });
+
+        if (error) throw error;
+
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch prospects', error: error.message });
+    }
+};
+
 module.exports = {
     addProspect,
+    getAllProspects,
 };
