@@ -7,7 +7,7 @@ const { isAdmin } = require('../authMiddleware');
 router.get('/', isAdmin, inscriptionLiensController.getAllLinks);
 
 // POST a new custom marketing link
-router.post('/', isAdmin, inscriptionLiensController.createCustomLink);
+router.post('/', isAdmin, inscriptionLiensController.createLink);
 
 // PUT to update a link
 router.put('/:id', isAdmin, inscriptionLiensController.updateLink);
