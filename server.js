@@ -46,6 +46,9 @@ app.use("/api/inscription/liens", inscriptionLiensRoutes);
 const inscriptionEventsRoutes = require("./Routes/inscriptionEventsRoutes");
 app.use("/api/inscription/events", inscriptionEventsRoutes);
 
+const inscriptionRotationRoutes = require("./Routes/inscriptionRotationRoutes");
+app.use("/api/inscription", inscriptionRotationRoutes);
+
 app.get("/", (req, res) => {
     res.send("Serveur GraceDesalpe avec Supabase est en marche !");
 });

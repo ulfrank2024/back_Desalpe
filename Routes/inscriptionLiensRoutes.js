@@ -10,9 +10,9 @@ router.get('/', isAdmin, inscriptionLiensController.getAllLinks);
 router.post('/', isAdmin, inscriptionLiensController.createCustomLink);
 
 // PUT to update a link
-// router.put('/:id', isAdmin, inscriptionLiensController.updateLink);
+router.put('/:id', isAdmin, inscriptionLiensController.updateLink);
 
 // DELETE to soft-delete a link
-// router.delete('/:id', isAdmin, inscriptionLiensController.deleteLink);
+router.delete('/:id', isAdmin, inscriptionLiensController.deleteLink);
 
 module.exports = router;
