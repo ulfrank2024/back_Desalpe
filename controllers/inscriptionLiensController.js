@@ -30,6 +30,9 @@ const createLink = async (req, res) => {
         return res.status(400).json({ message: 'Link type, destination URL and short code are required.' });
     }
 
+    // Convert empty string to null for valide_jusqu_a
+    const final_valide_jusqu_a = (valide_jusqu_a === '') ? null : valide_jusqu_a;
+
     try {
         const { data, error } = await supabase
             .from('liens_marketing')
@@ -40,7 +43,7 @@ const createLink = async (req, res) => {
                 ambassadeur_prenom,
                 ambassadeur_nom,
                 ambassadeur_email,
-                valide_jusqu_a: type_lien === 'personnalise' ? valide_jusqu_a : null // Only set for personalized links
+                valide_jusqu_a: final_valide_jusqu_a // Use the processed value
             }])
             .select();
 
