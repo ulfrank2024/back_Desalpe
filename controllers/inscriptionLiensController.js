@@ -84,7 +84,7 @@ const deleteLink = async (req, res) => {
     try {
         const { data, error } = await supabase
             .from('liens_marketing')
-            .update({ est_supprime: true, date_suppression: new Date().toISOString() })
+            .update({ est_supprime: true, date_suppression: new Date().toISOString(), est_actif: false })
             .eq('id', id)
             .select();
 
