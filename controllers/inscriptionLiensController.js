@@ -97,9 +97,56 @@ const deleteLink = async (req, res) => {
     }
 };
 
+const restoreLink = async (req, res) => {
+    const { id } = req.params;
+    const { daysToAdd } = req.body; // For custom links
+
+    try {
+        let updateData = {
+            est_supprime: false,
+            est_actif: true,
+            date_suppression: null // Clear deletion date
+        };
+
+        // If daysToAdd is provided, it's a custom link restoration
+        if (daysToAdd !== undefined && daysToAdd !== null) {
+            const { data: existingLink, error: fetchError } = await supabase
+                .from('liens_marketing')
+                .select('valide_jusqu_a')
+                .eq('id', id)
+                .single();
+
+            if (fetchError) throw fetchError;
+            if (!existingLink) return res.status(404).json({ message: 'Link not found for restoration' });
+
+            let newExpirationDate = new Date();
+            // If there was a previous valid_until date and it's in the future, use it as base
+            if (existingLink.valide_jusqu_a && new Date(existingLink.valide_jusqu_a) > newExpirationDate) {
+                newExpirationDate = new Date(existingLink.valide_jusqu_a);
+            }
+            newExpirationDate.setDate(newExpirationDate.getDate() + daysToAdd);
+            updateData.valide_jusqu_a = newExpirationDate.toISOString();
+        }
+
+        const { data, error } = await supabase
+            .from('liens_marketing')
+            .update(updateData)
+            .eq('id', id)
+            .select();
+
+        if (error) throw error;
+        if (data.length === 0) return res.status(404).json({ message: 'Link not found' });
+
+        res.status(200).json({ message: 'Link restored successfully', data: data[0] });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to restore link', error: error.message });
+    }
+};
+
 module.exports = {
     getAllLinks,
     createLink,
     updateLink,
     deleteLink,
+    restoreLink,
 };
