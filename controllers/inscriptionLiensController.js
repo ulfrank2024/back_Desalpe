@@ -99,7 +99,7 @@ const deleteLink = async (req, res) => {
 
 const restoreLink = async (req, res) => {
     const { id } = req.params;
-    const { daysToAdd } = req.body; // For custom links
+    const { valide_jusqu_a } = req.body; // For custom links
 
     try {
         let updateData = {
@@ -108,24 +108,9 @@ const restoreLink = async (req, res) => {
             date_suppression: null // Clear deletion date
         };
 
-        // If daysToAdd is provided, it's a custom link restoration
-        if (daysToAdd !== undefined && daysToAdd !== null) {
-            const { data: existingLink, error: fetchError } = await supabase
-                .from('liens_marketing')
-                .select('valide_jusqu_a')
-                .eq('id', id)
-                .single();
-
-            if (fetchError) throw fetchError;
-            if (!existingLink) return res.status(404).json({ message: 'Link not found for restoration' });
-
-            let newExpirationDate = new Date();
-            // If there was a previous valid_until date and it's in the future, use it as base
-            if (existingLink.valide_jusqu_a && new Date(existingLink.valide_jusqu_a) > newExpirationDate) {
-                newExpirationDate = new Date(existingLink.valide_jusqu_a);
-            }
-            newExpirationDate.setDate(newExpirationDate.getDate() + daysToAdd);
-            updateData.valide_jusqu_a = newExpirationDate.toISOString();
+        // If valide_jusqu_a is provided, it's a custom link restoration
+        if (valide_jusqu_a !== undefined && valide_jusqu_a !== null) {
+            updateData.valide_jusqu_a = new Date(valide_jusqu_a).toISOString();
         }
 
         const { data, error } = await supabase
