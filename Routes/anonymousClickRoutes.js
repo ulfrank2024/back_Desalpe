@@ -11,4 +11,7 @@ router.get('/invitation-confirmation/count', anonymousClickController.getInvitat
 // Route pour récupérer le nombre de clics de confirmation d'invitation par date
 router.get('/invitation-confirmation/by-date', anonymousClickController.getAnonymousClicksByDate);
 
+// Route pour récupérer les statistiques générales de clics
+router.get('/general-stats', anonymousClickController.getGeneralStats);
+
 module.exports = router;
