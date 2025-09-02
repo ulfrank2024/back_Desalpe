@@ -145,7 +145,8 @@ const sendReportEmail = async (req, res) => {
         const { ambassadeur_prenom, ambassadeur_email, nombre_clics, date_creation } = link;
         const startDate = new Date(date_creation).toLocaleDateString('fr-FR'); // Format date for email
 
-        const subject = "Votre Rapport de Performance de Lien / Your Link Performance Report";
+        const subject =
+            "Your Link Performance Report / Votre Rapport de Performance de Lien";
 
         const emailContentFr = `
             <p>Très Cher(e) ${ambassadeur_prenom},</p>
@@ -169,7 +170,7 @@ const sendReportEmail = async (req, res) => {
                     <h1 style="margin: 0; font-size: 24px;">Performance Report / Rapport de Performance</h1>
                 </div>
                 <div style="padding: 30px;">
-                    <p>THE FRENCH VERSION FOLLOWS BELOW,</p>
+                    <p>LA VERSION FRANCAISE SUIT CI-DESSOUS,</p>
                     <br/>
                     ${emailContentEn}
                     <hr style="margin: 30px 0;"/>
