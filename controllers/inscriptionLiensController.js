@@ -166,17 +166,17 @@ const sendReportEmail = async (req, res) => {
         const fullHtmlContent = `
             <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 20px auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
                 <div style="background-color: #254c07; color: white; padding: 20px; text-align: center;">
-                    <h1 style="margin: 0; font-size: 24px;">Rapport de Performance / Performance Report</h1>
+                    <h1 style="margin: 0; font-size: 24px;">Performance Report / Rapport de Performance</h1>
                 </div>
                 <div style="padding: 30px;">
-                    <p>LA VERSION ANGLAISE SUIT CI-DESSOUS,</p>
+                    <p>THE FRENCH VERSION FOLLOWS BELOW,</p>
                     <br/>
-                    ${emailContentFr}
-                    <hr style="margin: 30px 0;"/>
                     ${emailContentEn}
+                    <hr style="margin: 30px 0;"/>
+                    ${emailContentFr}
                 </div>
                 <div style="background-color: #f4f4f4; color: #888; padding: 15px; text-align: center; font-size: 12px;">
-                    <p style="margin: 0;">Ceci est un e-mail automatique, veuillez ne pas y répondre. / This is an automated email, please do not reply.</p>
+                    <p style="margin: 0;">This is an automated email, please do not reply. / Ceci est un e-mail automatique, veuillez ne pas y répondre.</p>
                 </div>
             </div>
         `;
