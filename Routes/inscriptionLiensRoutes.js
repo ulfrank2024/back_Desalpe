@@ -18,4 +18,7 @@ router.delete('/:id', isAdmin, inscriptionLiensController.deleteLink);
 // PUT to restore a soft-deleted link
 router.put('/:id/restore', isAdmin, inscriptionLiensController.restoreLink);
 
+// POST to send a report email for a link
+router.post('/:id/send-report', isAdmin, inscriptionLiensController.sendReportEmail);
+
 module.exports = router;
