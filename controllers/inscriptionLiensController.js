@@ -81,7 +81,6 @@ const updateLink = async (req, res) => {
 
 const deleteLink = async (req, res) => {
     const { id } = req.params;
-    console.log(`--- DEBUG: Appel de la fonction deleteLink pour l'ID: ${id} ---`); // Nouveau log
 
     try {
         // Étape 1: Marquer le lien comme supprimé
@@ -98,27 +97,43 @@ const deleteLink = async (req, res) => {
         // Étape 2: Envoyer l'e-mail de rapport final
         try {
             const { ambassadeur_prenom, ambassadeur_email, nombre_clics, date_creation } = linkData;
-            console.log(`--- DEBUG: Tentative d'envoi d'email pour ${ambassadeur_prenom} (${ambassadeur_email}) ---`); // Ligne de débogage
+            
             if (ambassadeur_email) { // N'envoyer que si l'email existe
                 const startDate = new Date(date_creation).toLocaleDateString('fr-FR');
                 const subject = "Your Final Link Performance Report / Votre Rapport de Performance Final de Lien";
-                const emailContentFr = `
-                    <p>Très Cher(e) ${ambassadeur_prenom},</p>
-                    <p>Votre lien de parrainage a été désactivé. Voici le rapport de performance final.</p>
-                    <p>Du ${startDate} à maintenant, vous avez obtenu ${nombre_clics || 0} clics pour rejoindre votre équipe.</p>
-                    <p>Merci pour votre contribution.</p>
-                `;
+
                 const emailContentEn = `
                     <p>Dearest ${ambassadeur_prenom},</p>
                     <p>Your referral link has been deactivated. Here is the final performance report.</p>
                     <p>From ${startDate} to now, you have received ${nombre_clics || 0} clicks to join your team.</p>
                     <p>Thank you for your contribution.</p>
                 `;
+
+                const emailContentFr = `
+                    <p>Très Cher(e) ${ambassadeur_prenom},</p>
+                    <p>Votre lien de parrainage a été désactivé. Voici le rapport de performance final.</p>
+                    <p>Du ${startDate} à maintenant, vous avez obtenu ${nombre_clics || 0} clics pour rejoindre votre équipe.</p>
+                    <p>Merci pour votre contribution.</p>
+                `;
+
                 const fullHtmlContent = `
-                    <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-                        <p>LA VERSION FRANCAISE SUIT CI-DESSOUS,</p><br/>${emailContentEn}<hr/>${emailContentFr}
+                    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 20px auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
+                        <div style="background-color: #254c07; color: white; padding: 20px; text-align: center;">
+                            <h1 style="margin: 0; font-size: 24px;">Performance Report / Rapport de Performance</h1>
+                        </div>
+                        <div style="padding: 30px;">
+                            <p>LA VERSION FRANCAISE SUIT CI-DESSOUS,</p>
+                            <br/>
+                            ${emailContentEn}
+                            <hr style="margin: 30px 0;"/>
+                            ${emailContentFr}
+                        </div>
+                        <div style="background-color: #f4f4f4; color: #888; padding: 15px; text-align: center; font-size: 12px;">
+                            <p style="margin: 0;">This is an automated email, please do not reply. / Ceci est un e-mail automatique, veuillez ne pas y répondre.</p>
+                        </div>
                     </div>
                 `;
+
                 await sendEmail(ambassadeur_email, subject, null, fullHtmlContent);
             }
         } catch (emailError) {
