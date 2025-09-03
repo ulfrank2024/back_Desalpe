@@ -81,18 +81,53 @@ const updateLink = async (req, res) => {
 
 const deleteLink = async (req, res) => {
     const { id } = req.params;
+    console.log(`--- DEBUG: Appel de la fonction deleteLink pour l'ID: ${id} ---`); // Nouveau log
 
     try {
-        const { data, error } = await supabase
+        // Étape 1: Marquer le lien comme supprimé
+        const { data: linkData, error: deleteError } = await supabase
             .from('liens_marketing')
             .update({ est_supprime: true, date_suppression: new Date().toISOString(), est_actif: false })
             .eq('id', id)
-            .select();
+            .select()
+            .single(); // .single() pour s'assurer qu'on a bien un seul objet
 
-        if (error) throw error;
-        if (data.length === 0) return res.status(404).json({ message: 'Link not found' });
+        if (deleteError) throw deleteError;
+        if (!linkData) return res.status(404).json({ message: 'Link not found' });
 
-        res.status(200).json({ message: 'Link deleted successfully' });
+        // Étape 2: Envoyer l'e-mail de rapport final
+        try {
+            const { ambassadeur_prenom, ambassadeur_email, nombre_clics, date_creation } = linkData;
+            console.log(`--- DEBUG: Tentative d'envoi d'email pour ${ambassadeur_prenom} (${ambassadeur_email}) ---`); // Ligne de débogage
+            if (ambassadeur_email) { // N'envoyer que si l'email existe
+                const startDate = new Date(date_creation).toLocaleDateString('fr-FR');
+                const subject = "Your Final Link Performance Report / Votre Rapport de Performance Final de Lien";
+                const emailContentFr = `
+                    <p>Très Cher(e) ${ambassadeur_prenom},</p>
+                    <p>Votre lien de parrainage a été désactivé. Voici le rapport de performance final.</p>
+                    <p>Du ${startDate} à maintenant, vous avez obtenu ${nombre_clics || 0} clics pour rejoindre votre équipe.</p>
+                    <p>Merci pour votre contribution.</p>
+                `;
+                const emailContentEn = `
+                    <p>Dearest ${ambassadeur_prenom},</p>
+                    <p>Your referral link has been deactivated. Here is the final performance report.</p>
+                    <p>From ${startDate} to now, you have received ${nombre_clics || 0} clicks to join your team.</p>
+                    <p>Thank you for your contribution.</p>
+                `;
+                const fullHtmlContent = `
+                    <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                        <p>LA VERSION FRANCAISE SUIT CI-DESSOUS,</p><br/>${emailContentEn}<hr/>${emailContentFr}
+                    </div>
+                `;
+                await sendEmail(ambassadeur_email, subject, null, fullHtmlContent);
+            }
+        } catch (emailError) {
+            // Ne pas bloquer la réponse même si l'email échoue. Logguer l'erreur côté serveur.
+            console.error(`Échec de l'envoi de l'email de rapport pour le lien ${id}, mais le lien a bien été supprimé.`, emailError);
+        }
+
+        res.status(200).json({ message: 'Link deleted successfully and final report sent.' });
+
     } catch (error) {
         res.status(500).json({ message: 'Failed to delete link', error: error.message });
     }
