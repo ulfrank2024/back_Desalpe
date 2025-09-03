@@ -1,4 +1,12 @@
 require("dotenv").config();
+
+// --- DEBUT DU CODE DE DEBUGGING ---
+console.log("--- Vérification des variables d'environnement au démarrage ---");
+console.log(`SUPABASE_URL: ${process.env.SUPABASE_URL ? 'Trouvée' : 'NON TROUVÉE'}`)
+console.log(`SUPABASE_SERVICE_ROLE_KEY: ${process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Trouvée' : 'NON TROUVÉE'}`)
+console.log("-----------------------------------------------------------");
+// --- FIN DU CODE DE DEBUGGING ---
+
 const express = require("express");
 const cors = require("cors");
 
