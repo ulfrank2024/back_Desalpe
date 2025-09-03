@@ -107,96 +107,104 @@ const getGeneralStats = async (req, res) => {
     switch (timeFilter) {
         case 'week':
             startDate = new Date(now);
-            startDate.setDate(now.getDate() - now.getDay()); // Start of the current week (Sunday)
+            startDate.setDate(now.getDate() - now.getDay() + (now.getDay() === 0 ? -6 : 1)); // Lundi comme premier jour
             endDate = new Date(startDate);
-            endDate.setDate(startDate.getDate() + 6); // End of the current week (Saturday)
+            endDate.setDate(startDate.getDate() + 6);
             break;
         case 'month':
             startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-            endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0); // Last day of the month
+            endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
             break;
         case 'year':
             startDate = new Date(now.getFullYear(), 0, 1);
-            endDate = new Date(now.getFullYear(), 11, 31); // Last day of the year
+            endDate = new Date(now.getFullYear(), 11, 31);
             break;
         default:
             return res.status(400).json({ message: 'Invalid timeFilter provided.' });
     }
 
-    endDate.setHours(23, 59, 59, 999); // Set end date to end of day
+    endDate.setHours(23, 59, 59, 999);
 
     try {
-        // Fetch all clicks within the period
+        // On lit depuis la nouvelle table `click_events`
         const { data: clicksData, error: clicksError } = await supabase
-            .from('anonymous_clicks')
-            .select('created_at, type_click')
+            .from('click_events')
+            .select('created_at, click_type')
             .gte('created_at', startDate.toISOString())
             .lte('created_at', endDate.toISOString());
 
         if (clicksError) throw clicksError;
 
-        // Initialize stats
-        let totalClicks = 0;
-        let formsSubmitted = 0;
         const buttonClicks = { paid: 0, pending: 0, not_interested: 0 };
+        let formsSubmitted = 0;
+        let invitationClicks = 0; // Pour CLIC_INVITATION
+
         const chartDataMap = new Map();
 
-        // Prepare chart data structure based on timeFilter
+        // Initialisation de la structure du graphique
         if (timeFilter === 'week') {
+            const weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
             for (let i = 0; i < 7; i++) {
                 const date = new Date(startDate);
                 date.setDate(startDate.getDate() + i);
-                chartDataMap.set(date.toISOString().split('T')[0], { label: date.toLocaleDateString('fr-FR', { weekday: 'short' }), clicks: 0, forms: 0, paid: 0, pending: 0, not_interested: 0 });
+                const dayKey = date.toISOString().split('T')[0];
+                chartDataMap.set(dayKey, { label: weekDays[i], clicks: 0, forms: 0, paid: 0, pending: 0, not_interested: 0 });
             }
         } else if (timeFilter === 'month') {
-            let currentWeekStart = new Date(startDate);
-            let weekNum = 1;
-            while (currentWeekStart <= endDate) {
-                const weekEnd = new Date(currentWeekStart);
-                weekEnd.setDate(currentWeekStart.getDate() + 6);
-                chartDataMap.set(`Sem ${weekNum}`, { label: `Sem ${weekNum}`, clicks: 0, forms: 0, paid: 0, pending: 0, not_interested: 0 });
-                currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-                weekNum++;
+            const weekCount = Math.ceil(endDate.getDate() / 7);
+            for (let i = 1; i <= weekCount; i++) {
+                chartDataMap.set(`Sem ${i}`, { label: `Sem ${i}`, clicks: 0, forms: 0, paid: 0, pending: 0, not_interested: 0 });
             }
         } else if (timeFilter === 'year') {
+            const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
             for (let i = 0; i < 12; i++) {
-                const monthDate = new Date(now.getFullYear(), i, 1);
-                chartDataMap.set(monthDate.getMonth().toString(), { label: monthDate.toLocaleDateString('fr-FR', { month: 'short' }), clicks: 0, forms: 0, paid: 0, pending: 0, not_interested: 0 });
+                chartDataMap.set(i.toString(), { label: monthNames[i], clicks: 0, forms: 0, paid: 0, pending: 0, not_interested: 0 });
             }
         }
 
-        // Process clicks data
+        // Traitement des données récupérées
         clicksData.forEach(click => {
-            totalClicks++;
             const clickDate = new Date(click.created_at);
             let periodKey;
 
             if (timeFilter === 'week') {
                 periodKey = clickDate.toISOString().split('T')[0];
             } else if (timeFilter === 'month') {
-                // Determine week number within the month
-                const dayOfMonth = clickDate.getDate();
-                const weekNumber = Math.ceil(dayOfMonth / 7);
+                const weekNumber = Math.ceil(clickDate.getDate() / 7);
                 periodKey = `Sem ${weekNumber}`;
             } else if (timeFilter === 'year') {
                 periodKey = clickDate.getMonth().toString();
             }
 
             const chartItem = chartDataMap.get(periodKey);
+
             if (chartItem) {
-                chartItem.clicks++;
-                if (click.type_click === 'form_submitted') {
-                    formsSubmitted++;
-                    chartItem.forms++;
-                } else if (click.type_click === 'paid_button') {
-                    buttonClicks.paid++;
-                    chartItem.paid++;
-                } else if (click.type_click === 'pending_button') {
-                    buttonClicks.pending++;
-                    chartItem.pending++;
-                } else if (click.type_click === 'not_interested_button') {
-                    buttonClicks.not_interested++;
-                    chartItem.not_interested++;
+                // On ne compte que les clics d'invitation dans le total du graphique
+                if(click.click_type === 'CLIC_INVITATION') {
+                    chartItem.clicks++;
+                }
+
+                switch (click.click_type) {
+                    case 'FORMULAIRE_SOUMIS':
+                        formsSubmitted++;
+                        chartItem.forms++;
+                        break;
+                    case 'PAIEMENT_EFFECTUE':
+                        buttonClicks.paid++;
+                        chartItem.paid++;
+                        break;
+                    case 'PAIEMENT_EN_ATTENTE':
+                        buttonClicks.pending++;
+                        chartItem.pending++;
+                        break;
+                    case 'NON_INTERESSE':
+                        buttonClicks.not_interested++;
+                        chartItem.not_interested++;
+                        break;
+                    case 'CLIC_INVITATION':
+                        invitationClicks++;
+                        // Déjà compté dans chartItem.clicks
+                        break;
                 }
             }
         });
@@ -204,7 +212,7 @@ const getGeneralStats = async (req, res) => {
         const chartData = Array.from(chartDataMap.values());
 
         res.status(200).json({
-            clicks: totalClicks,
+            clicks: invitationClicks, // Clics "Nous rejoindre"
             formsSubmitted: formsSubmitted,
             buttonClicks: buttonClicks,
             data: chartData,

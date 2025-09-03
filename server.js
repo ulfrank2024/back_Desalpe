@@ -49,6 +49,10 @@ app.use("/api/inscription/events", inscriptionEventsRoutes);
 const inscriptionRotationRoutes = require("./Routes/inscriptionRotationRoutes");
 app.use("/api/inscription", inscriptionRotationRoutes);
 
+// --- Route pour les événements de clics génériques ---
+const clickEventsRoutes = require("./Routes/clickEventsRoutes");
+app.use("/api/click-events", clickEventsRoutes);
+
 app.get("/", (req, res) => {
     res.send("Serveur GraceDesalpe avec Supabase est en marche !");
 });
