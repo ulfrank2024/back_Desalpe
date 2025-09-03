@@ -79,13 +79,16 @@ const getCurrentLink = async (req, res) => {
             linkToServe = currentLink;
         }
 
-        // 3. Return the destination URL
+        // 3. Return the destination URL and the link ID
         if (linkToServe && linkToServe.url_destination) {
-            res.status(200).json({ destinationUrl: linkToServe.url_destination });
+            console.log("--- DEBUG: Lien à servir ---", linkToServe); // Ligne de débogage
+            res.status(200).json({ 
+                destinationUrl: linkToServe.url_destination,
+                lien_id: linkToServe.id // Ajout de l'ID du lien
+            });
 
             // 4. Asynchronously track the click event
-            await supabase.from('evenements_tracking').insert([{ type_evenement: 'clic_lien', lien_id: linkToServe.id }]);
-            await supabase.rpc('increment_click_count', { link_id_to_update: linkToServe.id }); // Assuming a stored procedure for performance
+            await supabase.rpc('increment_click_count', { link_id_to_update: linkToServe.id });
 
         } else {
             // Fallback URL if no links are configured

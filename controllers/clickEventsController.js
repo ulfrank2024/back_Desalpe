@@ -1,12 +1,12 @@
 const supabase = require('../db/supabase');
 
 /**
- * Enregistre un événement de clic anonyme dans la base de données.
+ * Enregistre un événement de clic générique dans la base de données.
  */
 const recordClick = async (req, res) => {
-    const { click_type } = req.body;
+    const { click_type, lien_id } = req.body; // Accepter lien_id
 
-    // Validation que le type de clic est fourni
+    // Validation simple
     if (!click_type) {
         return res.status(400).json({ message: 'Le champ click_type est requis.' });
     }
@@ -15,7 +15,10 @@ const recordClick = async (req, res) => {
         const { error } = await supabase
             .from('click_events')
             .insert([
-                { click_type: click_type }
+                { 
+                    click_type: click_type,
+                    lien_id: lien_id // Enregistrer l'ID du lien
+                }
             ]);
 
         if (error) {
@@ -51,6 +54,7 @@ const getClickHistory = async (req, res) => {
                     ambassadeur_email
                 )
             `)
+            .eq('click_type', 'CLIC_INVITATION') // Filtre pour ne prendre que les clics d'invitation
             .order('created_at', { ascending: false });
 
         if (error) throw error;
