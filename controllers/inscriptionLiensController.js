@@ -100,7 +100,7 @@ const deleteLink = async (req, res) => {
             
             if (ambassadeur_email) { // N'envoyer que si l'email existe
                 const startDate = new Date(date_creation).toLocaleDateString('fr-FR');
-                const subject = "Your Final Link Performance Report / Votre Rapport de Performance Final de Lien";
+                const subject = " Deactivation / Désactivation";
 
                 const emailContentEn = `
                     <p>Dearest ${ambassadeur_prenom},</p>
