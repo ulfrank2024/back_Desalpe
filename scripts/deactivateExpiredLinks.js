@@ -1,4 +1,5 @@
 const supabase = require('../db/supabase');
+const emailService = require('../services/emailService'); // Importe l'objet complet
 require('dotenv').config();
 
 const deactivateExpiredLinks = async () => {
@@ -44,14 +45,14 @@ const deactivateExpiredLinks = async () => {
 
                     const emailContentEn = `
                         <p>Dearest ${link.ambassadeur_prenom},</p>
-                        <p>Your referral link has been deactivated. Here is the final performance report.</p>
+                        <p>Your referral link has expired due to its validation date. Here is the final performance report.</p>
                         <p>From ${startDate} to now, you have received ${link.nombre_clics || 0} clicks to join your team.</p>
                         <p>Thank you for your contribution.</p>
                     `;
 
                     const emailContentFr = `
                         <p>Très Cher(e) ${link.ambassadeur_prenom},</p>
-                        <p>Votre lien de parrainage a été désactivé. Voici le rapport de performance final.</p>
+                        <p>Votre lien de parrainage a expiré en raison de sa date de validité. Voici le rapport de performance final.</p>
                         <p>Du ${startDate} à maintenant, vous avez obtenu ${link.nombre_clics || 0} clics pour rejoindre votre équipe.</p>
                         <p>Merci pour votre contribution.</p>
                     `;
@@ -59,7 +60,7 @@ const deactivateExpiredLinks = async () => {
                     const fullHtmlContent = `
                         <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 20px auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
                             <div style="background-color: #254c07; color: white; padding: 20px; text-align: center;">
-                                <h1 style="margin: 0; font-size: 24px;">Performance Report / Rapport de Performance</h1>
+                                <h1 style="margin: 0; font-size: 24px;">Expired Link Report / Rapport de Lien Expiré</h1>
                             </div>
                             <div style="padding: 30px;">
                                 <p>LA VERSION FRANCAISE SUIT CI-DESSOUS,</p>
@@ -75,7 +76,7 @@ const deactivateExpiredLinks = async () => {
                     `;
 
                     if (link.ambassadeur_email) {
-                        await sendEmail(link.ambassadeur_email, subject, null, fullHtmlContent);
+                        await emailService.sendEmail(link.ambassadeur_email, subject, null, fullHtmlContent);
                         console.log(`Email de désactivation envoyé à ${link.ambassadeur_email}.`);
                     } else {
                         console.warn(`Lien ${link.id}: Pas d'email d'ambassadeur, email de désactivation non envoyé.`);

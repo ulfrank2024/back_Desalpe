@@ -151,6 +151,7 @@ const deleteLink = async (req, res) => {
 const restoreLink = async (req, res) => {
     const { id } = req.params;
     const { valide_jusqu_a } = req.body; // For custom links
+    console.log(`--- DEBUG: Appel de la fonction restoreLink pour l'ID: ${id} ---`); // Nouveau log
 
     try {
         let updateData = {
