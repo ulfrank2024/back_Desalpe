@@ -82,7 +82,7 @@ const deactivateExpiredLinks = async () => {
                         console.warn(`Lien ${link.id}: Pas d'email d'ambassadeur, email de désactivation non envoyé.`);
                     }
                 } catch (emailError) {
-                    console.error(`Échec de l'envoi de l'email de désactivation pour le lien ${link.id}:`, emailError);
+                    
                 }
 
             } catch (updateError) {
@@ -90,7 +90,7 @@ const deactivateExpiredLinks = async () => {
             }
         }
 
-        console.log('Désactivation des liens expirés terminée.');
+     
 
     } catch (error) {
         console.error('Erreur lors de la désactivation des liens expirés:', error);
