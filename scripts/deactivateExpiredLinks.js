@@ -40,6 +40,7 @@ const deactivateExpiredLinks = async () => {
 
                 // Envoyer un email à l'ambassadeur pour l'informer de la désactivation
                 try {
+                    console.log("--- DEBUG: Link object for email ---", link); // Nouveau log
                     const startDate = new Date(link.date_creation).toLocaleDateString('fr-FR');
                     const subject = "Your Final Link Performance Report / Votre Rapport de Performance Final de Lien";
 
