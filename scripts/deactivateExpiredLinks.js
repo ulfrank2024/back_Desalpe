@@ -11,15 +11,13 @@ const deactivateExpiredLinks = async () => {
         // 1. Récupérer les liens personnalisés actifs et non supprimés dont la date de validité est passée
         const { data: expiredLinks, error: fetchError } = await supabase
             .from('liens_marketing')
-            .select('id, code_court, ambassadeur_email, valide_jusqu_a')
+            .select('id, code_court, ambassadeur_prenom, ambassadeur_email, nombre_clics, date_creation, valide_jusqu_a')
             .eq('type_lien', 'personnalise')
             .eq('est_actif', true)
             .eq('est_supprime', false)
             .lte('valide_jusqu_a', now);
 
         if (fetchError) throw fetchError;
-
-        console.log("--- DEBUG: Expired Links from DB ---", expiredLinks); // Nouveau log
 
         if (expiredLinks.length === 0) {
             console.log('Aucun lien personnalisé expiré trouvé.');
@@ -40,9 +38,7 @@ const deactivateExpiredLinks = async () => {
 
                 console.log(`Lien ${link.code_court} (ID: ${link.id}) désactivé et marqué comme supprimé.`);
 
-                // Envoyer un email à l'ambassadeur pour l'informer de la désactivation
                 try {
-                    console.log("--- DEBUG: Link object for email ---", link); // Nouveau log
                     const startDate = new Date(link.date_creation).toLocaleDateString('fr-FR');
                     const subject = "Your Final Link Performance Report / Votre Rapport de Performance Final de Lien";
 
