@@ -61,7 +61,7 @@ const getCurrentLink = async (req, res) => {
         });
 
         // 6. Asynchronously track the click event (if needed, this is handled by frontend now)
-        // await supabase.rpc('increment_click_count', { link_id_to_update: linkToServe.id });
+        await supabase.rpc('increment_click_count', { link_id_to_update: linkToServe.id });
 
     } catch (error) {
         console.error('Error getting current link:', error);
