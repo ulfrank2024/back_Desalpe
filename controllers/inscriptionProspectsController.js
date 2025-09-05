@@ -26,7 +26,25 @@ const addProspect = async (req, res) => {
         if (prospectError) throw prospectError;
         const prospectId = prospectData.id;
 
-        // Step 2: Record the form submission event
+        // Step 2: Schedule the 3-day follow-up email
+        const threeDaysFromNow = new Date();
+        threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
+
+        const { error: scheduleError } = await supabase
+            .from('scheduled_emails')
+            .insert([
+                {
+                    prospect_id: prospectId,
+                    send_at: threeDaysFromNow.toISOString(),
+                    email_type: 'FOLLOW_UP_3_DAYS',
+                }
+            ]);
+
+        if (scheduleError) {
+            console.error('Could not schedule follow-up email:', scheduleError);
+        }
+
+        // Step 3: Record the form submission event
         const { error: eventError } = await supabase
             .from('evenements_tracking')
             .insert([{
@@ -39,7 +57,7 @@ const addProspect = async (req, res) => {
             console.error('Could not log form submission event:', eventError);
         }
 
-        // Step 3: Send the welcome email
+        // Step 4: Send the welcome email
         const subject = 'Welcome / Bienvenue';
         const designatedEmail = process.env.EMAIL_USER;
 
