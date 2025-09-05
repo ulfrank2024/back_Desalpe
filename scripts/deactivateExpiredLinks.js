@@ -19,6 +19,8 @@ const deactivateExpiredLinks = async () => {
 
         if (fetchError) throw fetchError;
 
+        console.log("--- DEBUG: Expired Links from DB ---", expiredLinks); // Nouveau log
+
         if (expiredLinks.length === 0) {
             console.log('Aucun lien personnalisé expiré trouvé.');
             return;
