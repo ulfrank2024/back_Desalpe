@@ -46,9 +46,11 @@ const sendWeeklyReports = async () => {
                 const emailContentFr = `
                     <p>Très Cher(e) ${ambassadeur_prenom},</p>
                     <p>Merci de faire confiance à notre outil d'inscription automatisé sur les réseaux sociaux. Par la même occasion vous contribuez financièrement aux opérations de croissance de notre merveilleuse équipe la Grace Team. Merci!</p>
-                    <p>Du ${startDate} à maintenant, vous avez obtenu ${nombre_clics || 0} clics pour rejoindre votre équipe.</p>
+                    <p>Du ${startDate} à maintenant, vous avez obtenu ${
+                    nombre_clics || 0
+                } clics pour rejoindre votre équipe.</p>
                     <p>Consultez régulièrement vos "direct referrals" dans votre compte DesAlpes afin d'apporter un bon accueil et un accompagnement bienveillant à toutes ces personnes qui rejoignent votre équipe.</p>
-                    <p>Ci-dessous une suggestion de courriel d'accueil à leur envoyer systématiquement : <<Cher(e) (son prénom), je vous souhaite la bienvenue dans la communauté mondiale d'affaires DesAlpes. Je suis la personne désignée pour vous accueillir et je me rend totalement disponible pour vous assister, vous accompagner et faciliter au maximum votre processus d'enrichissement dans notre communauté. Je vous laisse mon courriel et mon numéro de téléphone. Sentez-vous libre de me contacter pour quoi que ce soit, à tout moment. Merci.>>
+                    <p>Ci-dessous une suggestion de courriel d'accueil à leur envoyer systématiquement : " Cher(e) (son prénom), je vous souhaite la bienvenue dans la communauté mondiale d'affaires DesAlpes. Je suis la personne désignée pour vous accueillir et je me rend totalement disponible pour vous assister, vous accompagner et faciliter au maximum votre processus d'enrichissement dans notre communauté. Je vous laisse mon courriel et mon numéro de téléphone. Sentez-vous libre de me contacter pour quoi que ce soit, à tout moment. Merci."
                 `;
 
                 const fullHtmlContent = `
