@@ -165,12 +165,16 @@ const restoreLink = async (req, res) => {
             updateData.valide_jusqu_a = new Date(valide_jusqu_a).toISOString();
         }
 
+        console.log('--- DEBUG: updateData pour restauration ---', updateData); // Nouveau log
+
         const { data, error } = await supabase
             .from('liens_marketing')
             .update(updateData)
             .eq('id', id)
             .select();
 
+        console.log('--- DEBUG: Résultat Supabase update ---', { data, error }); // Nouveau log
+        
         if (error) throw error;
         if (data.length === 0) return res.status(404).json({ message: 'Link not found' });
 
