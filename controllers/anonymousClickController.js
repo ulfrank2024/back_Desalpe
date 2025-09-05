@@ -135,6 +135,10 @@ const getGeneralStats = async (req, res) => {
 
         if (clicksError) throw clicksError;
 
+        console.log("--- DEBUG: Clicks Data from DB ---", clicksData); // Ligne de débogage
+        console.log("--- DEBUG: Start Date ---", startDate.toISOString());
+        console.log("--- DEBUG: End Date ---", endDate.toISOString());
+
         const buttonClicks = { paid: 0, pending: 0, not_interested: 0 };
         let formsSubmitted = 0;
         let invitationClicks = 0; // Pour CLIC_INVITATION

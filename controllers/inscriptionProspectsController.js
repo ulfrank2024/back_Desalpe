@@ -42,8 +42,6 @@ const addProspect = async (req, res) => {
 
         if (scheduleError) {
             console.error('Could not schedule follow-up email:', scheduleError);
-        } else {
-            console.log('Follow-up email scheduled successfully for prospect:', prospectId);
         }
 
         // Step 3: Record the form submission event
