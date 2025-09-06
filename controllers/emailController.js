@@ -32,12 +32,28 @@ const sendGeneralEmail = async (req, res) => {
 
     try {
         let processedHtml = unescapeHtml(html);
-        processedHtml = fixMalformedUl(processedHtml); // Then fix malformed ULs
-        await sendEmail(to, subject, text, processedHtml);
-        res.status(200).json({ message: 'Email envoyé avec succès.' });
+        processedHtml = fixMalformedUl(processedHtml);
+
+        // Split the 'to' string into an array of individual email addresses
+        const recipients = to.split(',').map(email => email.trim());
+
+        // Loop through each recipient and send an individual email
+        for (const recipient of recipients) {
+            try {
+                await sendEmail(recipient, subject, text, processedHtml);
+                console.log(`Email sent successfully to ${recipient}`);
+            } catch (error) {
+                // Log the error for a specific recipient and continue with the next
+                console.error(`Failed to send email to ${recipient}:`, error);
+            }
+        }
+
+        res.status(200).json({ message: 'Emails envoyés avec succès à tous les destinataires valides.' });
+
     } catch (error) {
-        console.error('Erreur lors de l\'envoi de l\'email général:', error);
-        res.status(500).json({ message: 'Erreur interne du serveur lors de l\'envoi de l\'email.', error: error.message });
+        // This will catch errors from the initial processing (e.g., unescapeHtml)
+        console.error('Erreur générale lors du processus d\'envoi d\'email:', error);
+        res.status(500).json({ message: 'Erreur interne du serveur lors de la préparation de l\'envoi.', error: error.message });
     }
 };
 
