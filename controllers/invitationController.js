@@ -320,7 +320,8 @@ const checkRegistrationExists = async (req, res) => {
         if (sessionsError) throw sessionsError;
 
         if (existingSessions && existingSessions.length > 0) {
-            return res.status(200).json({ exists: true, message: 'Vous êtes déjà inscrit à une ou plusieurs de ces sessions.' });
+            // Return a message key instead of a hardcoded string
+            return res.status(200).json({ exists: true, messageKey: 'ERROR_ALREADY_REGISTERED' });
         } else {
             return res.status(200).json({ exists: false });
         }
