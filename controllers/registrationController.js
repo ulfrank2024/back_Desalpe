@@ -57,7 +57,7 @@ const addRegistration = async (req, res) => {
 
     } catch (error) {
         console.error("Erreur dans addRegistration:", error);
-        res.status(500).json({ message: 'Erreur interne du serveur lors de l'enregistrement.', error: error.message });
+        res.status(500).json({ message: "Erreur interne du serveur lors de l'enregistrement.", error: error.message });
     }
 };
 
