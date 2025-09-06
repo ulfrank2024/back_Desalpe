@@ -12,6 +12,26 @@ const addRegistration = async (req, res) => {
     }
 
     try {
+        // --- START: Vérification de l'inscription existante ---
+        const { data: existingRegistrations, error: checkError } = await supabase
+            .from('registrations')
+            .select('session_ids')
+            .eq('email', email);
+
+        if (checkError) {
+            console.error('Supabase error during existence check:', checkError);
+            return res.status(500).json({ message: 'Erreur lors de la vérification des inscriptions existantes.', error: checkError.message });
+        }
+
+        if (existingRegistrations && existingRegistrations.length > 0) {
+            const existingSessionIds = existingRegistrations.flatMap(reg => reg.session_ids);
+            const overlap = sessionIds.some(id => existingSessionIds.includes(id));
+            if (overlap) {
+                return res.status(409).json({ message: 'Vous êtes déjà inscrit à une ou plusieurs des sessions sélectionnées.' });
+            }
+        }
+        // --- END: Vérification de l'inscription existante ---
+
         const { data, error } = await supabase // Utiliser le client global
             .from('registrations')
             .insert([
@@ -37,7 +57,7 @@ const addRegistration = async (req, res) => {
 
     } catch (error) {
         console.error("Erreur dans addRegistration:", error);
-        res.status(500).json({ message: 'Erreur interne du serveur lors de l\'enregistrement.', error: error.message });
+        res.status(500).json({ message: 'Erreur interne du serveur lors de l'enregistrement.', error: error.message });
     }
 };
 
