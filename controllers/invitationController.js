@@ -288,39 +288,44 @@ const listAllInvitations = async (req, res) => {
 };
 
 const checkRegistrationExists = async (req, res) => {
-    const { email, sessionIds } = req.body; // sessionIds est un tableau
+    const { email, sessionIds } = req.body;
 
     if (!email || !sessionIds || !Array.isArray(sessionIds) || sessionIds.length === 0) {
         return res.status(400).json({ message: 'Email and sessionIds array are required.' });
     }
 
     try {
-        // Trouver l'invitation existante par email
-        const { data: existingInvitation, error: fetchError } = await supabase
+        // Step 1: Find ALL invitations for the given email. Do NOT use .single().
+        const { data: existingInvitations, error: fetchError } = await supabase
             .from('invitations')
             .select('id')
-            .eq('email', email)
-            .single();
+            .eq('email', email);
 
-        if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 = pas de ligne trouvée
+        if (fetchError) {
             throw fetchError;
         }
 
-        if (!existingInvitation) {
-            return res.status(200).json({ exists: false }); // L'utilisateur n'est pas du tout inscrit
+        // If no invitations found for that email, they can't be registered.
+        if (!existingInvitations || existingInvitations.length === 0) {
+            return res.status(200).json({ exists: false });
         }
 
-        // Vérifier si l'utilisateur est déjà inscrit à l'une des sessions sélectionnées
+        // Step 2: Collect all the invitation IDs found.
+        const existingInvitationIds = existingInvitations.map(inv => inv.id);
+
+        // Step 3: Check if any of those invitation IDs are associated with any of the selected session IDs.
         const { data: existingSessions, error: sessionsError } = await supabase
             .from('invitation_sessions')
             .select('session_id')
-            .eq('invitation_id', existingInvitation.id)
-            .in('session_id', sessionIds); // Vérifie si l'une des sessions sélectionnées existe déjà
+            .in('invitation_id', existingInvitationIds) // Use .in() for multiple invitation IDs
+            .in('session_id', sessionIds);
 
-        if (sessionsError) throw sessionsError;
+        if (sessionsError) {
+            throw sessionsError;
+        }
 
+        // If we found any matching session registrations, the user is already registered.
         if (existingSessions && existingSessions.length > 0) {
-            // Return a message key instead of a hardcoded string
             return res.status(200).json({ exists: true, messageKey: 'ERROR_ALREADY_REGISTERED' });
         } else {
             return res.status(200).json({ exists: false });
