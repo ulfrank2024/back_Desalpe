@@ -9,4 +9,7 @@ router.post('/', inscriptionProspectsController.addProspect);
 // Route to get all prospects
 router.get('/', isAdmin, inscriptionProspectsController.getAllProspects);
 
+// Route to check if a prospect exists by email
+router.get('/check-exists', inscriptionProspectsController.checkProspectExists);
+
 module.exports = router;

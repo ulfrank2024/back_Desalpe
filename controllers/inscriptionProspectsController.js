@@ -140,7 +140,34 @@ const getAllProspects = async (req, res) => {
     }
 };
 
+const checkProspectExists = async (req, res) => {
+    const { email } = req.query;
+
+    if (!email) {
+        return res.status(400).json({ message: 'Email parameter is required.' });
+    }
+
+    try {
+        const { data, error } = await supabase
+            .from('prospects')
+            .select('id')
+            .eq('email', email)
+            .single();
+
+        if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
+            throw error;
+        }
+
+        res.status(200).json({ exists: !!data });
+
+    } catch (error) {
+        console.error('Error checking prospect existence:', error);
+        res.status(500).json({ message: 'Failed to check prospect existence.', error: error.message });
+    }
+};
+
 module.exports = {
     addProspect,
     getAllProspects,
+    checkProspectExists,
 };
