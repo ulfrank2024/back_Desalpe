@@ -147,12 +147,16 @@ const checkProspectExists = async (req, res) => {
         return res.status(400).json({ message: 'Email parameter is required.' });
     }
 
+    console.log(`--- DEBUG: Checking prospect existence for email: ${email} ---`); // Nouveau log
+
     try {
         const { data, error } = await supabase
             .from('prospects')
             .select('id')
             .eq('email', email)
             .single();
+
+        console.log('--- DEBUG: Supabase check result ---', { data, error }); // Nouveau log
 
         if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
             throw error;

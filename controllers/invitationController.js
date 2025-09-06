@@ -287,9 +287,54 @@ const listAllInvitations = async (req, res) => {
     }
 };
 
+const checkRegistrationExists = async (req, res) => {
+    const { email, sessionIds } = req.body; // sessionIds est un tableau
+
+    if (!email || !sessionIds || !Array.isArray(sessionIds) || sessionIds.length === 0) {
+        return res.status(400).json({ message: 'Email and sessionIds array are required.' });
+    }
+
+    try {
+        // Trouver l'invitation existante par email
+        const { data: existingInvitation, error: fetchError } = await supabase
+            .from('invitations')
+            .select('id')
+            .eq('email', email)
+            .single();
+
+        if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 = pas de ligne trouvée
+            throw fetchError;
+        }
+
+        if (!existingInvitation) {
+            return res.status(200).json({ exists: false }); // L'utilisateur n'est pas du tout inscrit
+        }
+
+        // Vérifier si l'utilisateur est déjà inscrit à l'une des sessions sélectionnées
+        const { data: existingSessions, error: sessionsError } = await supabase
+            .from('invitation_sessions')
+            .select('session_id')
+            .eq('invitation_id', existingInvitation.id)
+            .in('session_id', sessionIds); // Vérifie si l'une des sessions sélectionnées existe déjà
+
+        if (sessionsError) throw sessionsError;
+
+        if (existingSessions && existingSessions.length > 0) {
+            return res.status(200).json({ exists: true, message: 'Vous êtes déjà inscrit à une ou plusieurs de ces sessions.' });
+        } else {
+            return res.status(200).json({ exists: false });
+        }
+
+    } catch (error) {
+        console.error('Error checking registration existence:', error);
+        res.status(500).json({ message: 'Failed to check registration existence.', error: error.message });
+    }
+};
+
 module.exports = {
     createInvitation,
     getStats,
     getStatsByDate,
     listAllInvitations,
+    checkRegistrationExists,
 };

@@ -21,6 +21,9 @@ router.get('/stats/by-date', isAdmin, invitationController.getStatsByDate);
 
 router.get('/', isAdmin, invitationController.listAllInvitations);
 
+// Route to check if a registration exists
+router.post('/check-registration', invitationController.checkRegistrationExists);
+
 // // Route pour supprimer une invitation (protégée)
 // router.delete('/:id', isAdmin, invitationController.deleteInvitation);
 
