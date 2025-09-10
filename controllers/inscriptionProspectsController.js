@@ -70,7 +70,7 @@ const addProspect = async (req, res) => {
             <p>You now have your own invitation link, accessible and shareable from your online member account with your friends and family. We thank you for spreading the word about this community and contributing to the global growth of our community. You'll be amazed at the significant revenue associated with this ambassador role, when those who sign up using your invitation link, in turn, make the one-time payment.</p>
             <p><strong>Find below:</strong></p>
             <ul style="list-style-type: none; padding-left: 0;">
-                <li style="margin-bottom: 15px;">&#8226; The link to the registration process if you haven't completed it (Please do not share it with others):<br/><a href="https://gracedesalpes.vercel.app/selection">https://gracedesalpes.vercel.app/selection</a></li>
+                <li style="margin-bottom: 15px;">&#8226; The link to the registration process if you haven't completed it (Please do not share it with others):<br/><a href="https://www.gracedesalpesinvite.ca/selection">https://www.gracedesalpesinvite.ca/selection</a></li>
                 <li style="margin-bottom: 15px;">&#8226; The link to log in to your online member account with the email and password used in the last step of your membership (Preferably save it):<br/><a href="https://desalpes.world/login">https://desalpes.world/login</a></li>
                 <li style="margin-bottom: 15px;">&#8226; The link to join a Telegram information group, to stay informed about solutions and new features that continually improve your income (highly recommended):<br/><a href="https://t.me/+zqiJbS7ZdgpmOTNh">https://t.me/+zqiJbS7ZdgpmOTNh</a></li>
             </ul>
@@ -86,7 +86,7 @@ const addProspect = async (req, res) => {
             <p>Vous possédez désormais votre propre lien d'invitation, accessible et partageable à partir de votre compte en ligne de membre à vos proches et connaissances. Nous vous remercions de faire connaître cette communauté autour de vous et de contribuer à la croissance mondiale de notre communauté. Vous allez être étonné de l'importance des revenus attachés à ce rôle d'ambassadeur, lorsque ceux qui s'inscrivent à partir de votre lien d'invitation, font à leur tour le paiement unique.</p>
             <p><strong>Trouvez ci-dessous:</strong></p>
             <ul style="list-style-type: none; padding-left: 0;">
-                <li style="margin-bottom: 15px;">&#8226; Le lien du processus d'inscription si vous ne l'aviez pas complété (Ne le partager pas à d'autres svp):<br/><a href="https://gracedesalpes.vercel.app/selection">https://gracedesalpes.vercel.app/selection</a></li>
+                <li style="margin-bottom: 15px;">&#8226; Le lien du processus d'inscription si vous ne l'aviez pas complété (Ne le partager pas à d'autres svp):<br/><a href="https://www.gracedesalpesinvite.ca/selection">https://www.gracedesalpesinvite.ca/selection</a></li>
                 <li style="margin-bottom: 15px;">&#8226; Le lien pour se connecter à votre compte en ligne de membre avec le courriel et le mot de passe utilisé à la dernière étape de votre adhésion (Enregistrez-le de préférence):<br/><a href="https://desalpes.world/login">https://desalpes.world/login</a></li>
                 <li style="margin-bottom: 15px;">&#8226; Le lien d'intégration à un groupe telegram d'information, afin de rester informer des solutions et nouveautés qui améliorent continuellement vos revenus (très recommandé):<br/>
                     Groupe Telegram en français:<br/>

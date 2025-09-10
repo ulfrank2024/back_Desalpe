@@ -46,7 +46,7 @@ const sendScheduledEmails = async () => {
             let subject = '';
             let emailContentEn = '';
             let emailContentFr = '';
-            let linktreeUrl = 'https://gracedesalpes.vercel.app/ClientStatusPage'; // Lien fourni par l'utilisateur
+            let linktreeUrl ="https://www.gracedesalpesinvite.ca/ClientStatusPage"; // Lien fourni par l'utilisateur
 
             switch (email_type) {
                 case 'FOLLOW_UP_3_DAYS':
